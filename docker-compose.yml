@@ -21,12 +21,11 @@ services:
     depends_on:
       - db
     environment:
-      # très important : même URL que dans main.py
       DATABASE_URL: postgresql+psycopg2://app_user:app_password@db:5432/mba_db
     ports:
       - "8501:8501"
     volumes:
-      - .:/app  # pratique pour dev, reload de code
+      - .:/app 
 
 volumes:
   db_data:
