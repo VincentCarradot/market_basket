@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: mba_postgres
+    environment:
+      POSTGRES_DB: mba_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data/dataset.csv:/docker-entrypoint-initdb.d/dataset.csv
+    ports:
+      - "5432:5432"
+
+  app:
+    build: .
+    container_name: mba_app
+    depends_on:
+      - db
+    environment:
+      # très important : même URL que dans main.py
+      DATABASE_URL: postgresql+psycopg2://app_user:app_password@db:5432/mba_db
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app  # pratique pour dev, reload de code
+
+volumes:
+  db_data:
